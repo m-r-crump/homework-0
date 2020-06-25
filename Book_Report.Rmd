@@ -1,0 +1,28 @@
+---
+title: "Book Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+#install packages
+Packages <- c("tidyverse","lubridate","scales")
+lapply(Packages, library, character.only = TRUE)
+#pull in csv
+books_2019 <- read.csv("C:\\Users\\mcrump\\Documents\\rproj\\Books_2019.csv")
+#mutate, formatting date columns and adding days_read
+books_2019 <- books_2019 %>% mutate(date_started = mdy(date_started_txt)) %>% mutate(date_completed = mdy(date_completed_txt)) %>% mutate(days_read = difftime(date_completed,date_started,units = "days"))
+```
+
+## Goodread Ratings vs Number of Raters
+
+```{r Goodread Ratings Vs Number of Raters, echo=FALSE}
+#Unfaceted graph
+books_2019 %>% ggplot(aes(y=gr_raters,color=as.character(my_rating))) + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x))) + xlim(1,5) + geom_segment(aes(x=my_rating,xend=my_rating,y=0,yend=Inf)) + geom_point(aes(x=gr_avg_rating,color=as.character(my_rating))) + labs(x="Avg. Goodreads Rating",y="Number of Goodread Reviewers",color="My Rating")
+
+#Faceted graph
+books_2019 %>% ggplot(aes(y=gr_raters,color=as.character(my_rating))) + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x))) + xlim(1,5) + geom_segment(aes(x=my_rating,xend=my_rating,y=0,yend=Inf)) + geom_point(aes(x=gr_avg_rating,color=as.character(my_rating))) + facet_grid(my_rating~.) + labs(x="Avg. Goodreads Rating",y="Number of Goodread Reviewers",color="My Rating")
+```
+
+```{r }
+```
